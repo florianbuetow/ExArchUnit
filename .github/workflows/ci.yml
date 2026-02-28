@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: "28.2"
+          elixir-version: "1.19.1"
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Check formatting
+        run: mix format --check-formatted
+
+      - name: Run tests
+        run: mix test
+
+      - name: Build docs
+        run: mix docs
