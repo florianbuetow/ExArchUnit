@@ -49,15 +49,23 @@ defmodule ArchitectureTest do
 end
 ```
 
+**3b. Or skip the test file — just run the config rules directly:**
+
+```bash
+mix arch.check
+```
+
 **4. Run:**
 
 ```bash
-mix test
+mix test           # runs arch tests alongside your other tests
+mix arch.check     # standalone config rule check (no test file needed)
 ```
 
 ## Features
 
 - **ExUnit-first** — architecture rules are normal tests, run with `mix test`
+- **`mix arch.check`** — enforce `arch.exs` rules without writing a test file
 - **One-liner rules** — `forbid`, `allow`, and `assert_no_cycles` read like plain English
 - **Config DSL** — declare layers and rules in `arch.exs`, auto-enforced on every test run
 - **Global graph caching** — graph built once per run via `:persistent_term`, cache-hit in milliseconds
@@ -143,11 +151,22 @@ The cache invalidates when:
 - BEAM file count changes in an analyzed `ebin` directory
 - Any filter option changes (`include`, `exclude`, `include_deps`, `include_behaviours`)
 
+### `mix arch.check`
+
+Evaluates config-defined layer rules without a test file:
+
+```bash
+mix arch.check                          # uses arch.exs
+mix arch.check --config path/to/arch.exs
+mix arch.check --no-cache               # bypass graph cache
+```
+
 ### Environment Variables
 
 ```bash
-ExArch_NO_CACHE=1 mix test    # force rebuild every time
-ExArch_PROFILE=1 mix test     # print graph build stats
+ExArch_NO_CACHE=1 mix test         # force rebuild every time
+ExArch_PROFILE=1  mix test         # print graph build stats
+ExArch_PROFILE=1  mix arch.check   # also works with arch.check
 ```
 
 ### Performance
@@ -164,7 +183,7 @@ ExArch_PROFILE=1 mix test     # print graph build stats
 ### Test
 
 ```bash
-mix test            # 87 tests
+mix test            # 93 tests
 mix test --cover    # with coverage report (92.9% total)
 ```
 

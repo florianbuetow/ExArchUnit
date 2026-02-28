@@ -19,5 +19,6 @@
 - `include`/`exclude` module filters and `include_deps` option.
 - Umbrella project support with `Mix.Project.apps_paths/0` and filesystem fallback.
 - Deterministic violation reporting via `ExArch.Reporter`.
+- `mix arch.check` task to enforce `arch.exs` rules without a test file (`--config`, `--no-cache`).
 - Reproducible synthetic umbrella benchmark via `mix arch.bench`.
 - GitHub Actions CI workflow for formatting and tests.

@@ -12,6 +12,7 @@ defmodule ExArchUnit.MixProject do
         ignore_modules: [
           ExArch.Benchmark.SyntheticUmbrella,
           Mix.Tasks.Arch.Bench,
+          Mix.Tasks.Arch.Check,
           ExArchFixture.Bad.Domain.Service,
           ExArchFixture.Bad.Web.Endpoint,
           ExArchFixture.Behaviour.Contract,
