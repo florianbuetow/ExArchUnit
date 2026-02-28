@@ -2,7 +2,7 @@
 
 ![Made with AI](https://img.shields.io/badge/Made%20with-AI-333333?labelColor=f00) ![Verified by Humans](https://img.shields.io/badge/Verified%20by-Humans-333333?labelColor=brightgreen) ![Coverage](https://img.shields.io/badge/Coverage-92.9%25-brightgreen)
 
-Enforce architecture rules in Elixir projects. Define layer boundaries, forbid illegal dependencies, and detect cycles — using compiled BEAM dependency graphs. Built for fast feedback loops in dev, CI, and AI-agent workflows.
+Enforce architecture rules in Elixir projects — without touching production code. Define layer boundaries in a standalone `arch.exs` file, run `mix arch.check`, and get CI-friendly output. Rules live outside your application, so your production modules stay clean.
 
 ## Quick Start
 
@@ -88,6 +88,19 @@ Note: `use ExArch` also auto-enforces your `arch.exs` layer rules during `setup_
 - **Umbrella-aware** — analyzes all umbrella child apps by default
 - **Deterministic output** — sorted, stable violation messages suitable for AI-agent feedback loops
 - **BEAM-accurate** — dependencies extracted from compiled BEAM files via `:xref`, not source parsing
+
+## Why Not Boundary?
+
+[Boundary](https://github.com/sasa1977/boundary) enforces module boundaries at compile time using `use Boundary` attributes inside your production modules. This means architecture rules are scattered across your codebase and coupled to the modules they constrain.
+
+ExArchUnit takes the opposite approach: **rules live entirely outside your production code** in a standalone `arch.exs` file. Your application modules don't know they're being checked. This means:
+
+- No `use`, `import`, or module attributes added to production code
+- Rules are centralized in one file, easy to review and change
+- You can add or remove ExArchUnit without modifying a single application module
+- Architecture rules can be enforced in CI without being a compile-time dependency
+
+If you prefer compile-time enforcement baked into your modules, use Boundary. If you want rules separate from production code, use ExArchUnit.
 
 ## ExUnit API
 

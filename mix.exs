@@ -25,7 +25,9 @@ defmodule ExArchUnit.MixProject do
           ExArchFixture.Smoke.B
         ]
       ],
-      description: "Architecture tests for Elixir projects using ExUnit",
+      description:
+        "Enforce architecture rules in Elixir projects — without touching production code. " <>
+          "Define layer boundaries in arch.exs, run mix arch.check, and get CI-friendly violations.",
       package: package(),
       homepage_url: "https://github.com/florianbuetow/ExArchUnit",
       source_url: "https://github.com/florianbuetow/ExArchUnit",
