@@ -435,7 +435,7 @@ violations, fix code — as fast as a fingerprint check on most iterations.
 
 - Global graph build once per test suite (ExUnit suite callbacks)
 - Incremental graph updates
-- `mix arch.check` CLI for CI pipelines
+- ~~`mix arch.check` CLI for CI pipelines~~ ✓ Implemented
 - Graph visualisation export (DOT / SVG)
 - Umbrella app boundary enforcement
 - Behaviour-based architectural rules
@@ -447,7 +447,7 @@ violations, fix code — as fast as a fingerprint check on most iterations.
 
 | # | Decision | Status |
 |---|---|---|
-| 1 | Works as ExUnit helper, not Mix task | ✓ Implemented |
+| 1 | Works as ExUnit helper, with optional `mix arch.check` CLI | ✓ Implemented |
 | 2 | Graph built in `setup_all`, shared via cache across modules | ✓ Implemented — cache interaction documented |
 | 3 | Config in `arch.exs`, evaluated via `import ExArch.Config.DSL` + `Code.eval_string` | ✓ Implemented |
 | 4 | `:xref` fully isolated in `Graph.Builder` | ✓ Implemented |
