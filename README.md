@@ -2,7 +2,7 @@
 
 ![Made with AI](https://img.shields.io/badge/Made%20with-AI-333333?labelColor=f00) ![Verified by Humans](https://img.shields.io/badge/Verified%20by-Humans-333333?labelColor=brightgreen) ![Coverage](https://img.shields.io/badge/Coverage-92.9%25-brightgreen)
 
-ArchUnit-like architecture testing for Elixir. Define layer boundaries, forbid illegal dependencies, and detect cycles — all as normal ExUnit tests against compiled BEAM dependency graphs. Built for fast feedback loops in dev and AI-agent workflows.
+Enforce architecture rules in Elixir projects. Define layer boundaries, forbid illegal dependencies, and detect cycles — using compiled BEAM dependency graphs. Built for fast feedback loops in dev, CI, and AI-agent workflows.
 
 ## Quick Start
 
@@ -28,60 +28,76 @@ layers do
 end
 ```
 
-**3. Add an architecture test:**
+**3. Run:**
+
+```bash
+mix arch.check
+```
+
+That's it. No test file needed. It enforces your `arch.exs` rules and exits with code 1 on violations. Add it to CI and you're done.
+
+## Two Ways to Enforce Rules
+
+### Option A: `mix arch.check` (recommended for most users)
+
+Write your rules in `arch.exs` and run `mix arch.check`. This is the simplest path — one config file, one command. Covers `allow` and `forbid` layer rules.
+
+```bash
+mix arch.check                            # uses arch.exs
+mix arch.check --config path/to/arch.exs  # custom config path
+mix arch.check --no-cache                 # bypass graph cache
+```
+
+### Option B: ExUnit tests (when you need more)
+
+Write a test file with `use ExArch` when you need capabilities beyond what `arch.exs` offers:
+
+- **Cycle detection** — `assert_no_cycles` isn't available in `arch.exs` yet
+- **Ad-hoc rules** — one-off `forbid`/`allow` checks that don't belong in the global config
+- **Test integration** — run architecture checks as part of `mix test`
 
 ```elixir
 defmodule ArchitectureTest do
   use ExUnit.Case, async: true
   use ExArch, config: "arch.exs"
 
-  test "domain does not depend on web" do
-    forbid "MyApp.Domain.*", depends_on: "MyAppWeb.*"
-  end
-
-  test "web only depends on domain" do
-    allow "MyAppWeb.*", depends_on: "MyApp.Domain.*"
-  end
-
+  # Cycle detection (not available in arch.exs)
   test "domain has no cycles" do
     assert_no_cycles prefix: "MyApp.Domain.*"
+  end
+
+  # Ad-hoc rule outside the config
+  test "controllers don't call repo directly" do
+    forbid "MyAppWeb.Controllers.*", depends_on: "MyApp.Repo.*"
   end
 end
 ```
 
-**3b. Or skip the test file — just run the config rules directly:**
-
 ```bash
-mix arch.check
+mix test
 ```
 
-**4. Run:**
-
-```bash
-mix test           # runs arch tests alongside your other tests
-mix arch.check     # standalone config rule check (no test file needed)
-```
+Note: `use ExArch` also auto-enforces your `arch.exs` layer rules during `setup_all` by default, so you don't need to duplicate them as tests.
 
 ## Features
 
-- **ExUnit-first** — architecture rules are normal tests, run with `mix test`
-- **`mix arch.check`** — enforce `arch.exs` rules without writing a test file
-- **One-liner rules** — `forbid`, `allow`, and `assert_no_cycles` read like plain English
-- **Config DSL** — declare layers and rules in `arch.exs`, auto-enforced on every test run
+- **`mix arch.check`** — enforce `arch.exs` rules with one command, no test file needed
+- **ExUnit integration** — write architecture tests with `forbid`, `allow`, and `assert_no_cycles` when you need more
+- **Config DSL** — declare layers and rules in `arch.exs`
 - **Global graph caching** — graph built once per run via `:persistent_term`, cache-hit in milliseconds
 - **Umbrella-aware** — analyzes all umbrella child apps by default
 - **Deterministic output** — sorted, stable violation messages suitable for AI-agent feedback loops
 - **BEAM-accurate** — dependencies extracted from compiled BEAM files via `:xref`, not source parsing
 
-## Public API
+## ExUnit API
 
-- `use ExArch, config: "arch.exs"` injects a `setup_all` that builds or reuses the graph.
-- `forbid/2` fails when source modules depend on forbidden targets.
-- `allow/2` fails when source modules depend on anything outside the allow-list (self-references are always permitted).
-- `assert_no_cycles/1` fails when SCC cycles are found in selected modules.
+These macros are available inside test modules that `use ExArch`:
 
-By default, `use ExArch` also enforces layer rules declared in `arch.exs`.
-Disable that for a module if needed:
+- `forbid/2` — fails when source modules depend on forbidden targets.
+- `allow/2` — fails when source modules depend on anything outside the allow-list (self-references are always permitted).
+- `assert_no_cycles/1` — fails when SCC cycles are found in selected modules.
+
+`use ExArch` also auto-enforces `arch.exs` layer rules during `setup_all`. Disable if needed:
 
 ```elixir
 use ExArch, config: "arch.exs", enforce_config_rules: false
@@ -150,16 +166,6 @@ The cache invalidates when:
 - Any analyzed BEAM file mtime changes
 - BEAM file count changes in an analyzed `ebin` directory
 - Any filter option changes (`include`, `exclude`, `include_deps`, `include_behaviours`)
-
-### `mix arch.check`
-
-Evaluates config-defined layer rules without a test file:
-
-```bash
-mix arch.check                          # uses arch.exs
-mix arch.check --config path/to/arch.exs
-mix arch.check --no-cache               # bypass graph cache
-```
 
 ### Environment Variables
 
