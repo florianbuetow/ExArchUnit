@@ -199,65 +199,25 @@ ExArch_PROFILE=1  mix arch.check   # also works with arch.check
 
 ## Development
 
-### Test
+This project uses [just](https://github.com/casey/just) as a command runner. Run `just` to see all available recipes.
 
 ```bash
-mix test            # 93 tests
-mix test --cover    # with coverage report (92.9% total)
-```
+just init              # Install Hex dependencies from mix.lock
+just build             # Compile source and generate ExDoc HTML
+just clean             # Remove _build and fetched dependencies
 
-Run only the minimal smoke scenario:
+just ci                # Format, test, and build
+just test              # ExUnit suite with coverage and graph build profiling
+just test-nocache      # Same as test but with graph cache disabled (forces xref rebuild)
 
-```bash
-mix test test/ex_arch/smoke_test.exs
-```
-
-### Test Coverage
-
-| Module | Coverage |
-|---|---|
-| ExArch.Config.DSL | 100% |
-| ExArch.Reporter | 100% |
-| ExArch.Rule | 100% |
-| ExArch.Selector | 100% |
-| ExArch.Config | 96% |
-| ExArch.Graph.Cache | 95% |
-| ExArch.Rule.Evaluator | 94% |
-| ExArch.Graph | 91% |
-| ExArch | 88% |
-| ExArch.Graph.Builder | 87% |
-| **Total** | **92.9%** |
-
-### Format
-
-```bash
-mix format
-```
-
-### Docs
-
-```bash
-mix docs
-```
-
-### Benchmark
-
-Synthetic umbrella benchmark:
-
-```bash
-mix arch.bench
+just code-format       # Auto-format all source files
+just code-benchmark    # Benchmark graph build on a synthetic umbrella
 ```
 
 Tune benchmark size:
 
 ```bash
-ExArch_BENCH_APPS=6 ExArch_BENCH_MODULES_PER_APP=120 mix arch.bench
-```
-
-Keep generated benchmark project:
-
-```bash
-ExArch_BENCH_KEEP_TMP=1 mix arch.bench
+ExArch_BENCH_APPS=6 ExArch_BENCH_MODULES_PER_APP=120 just code-benchmark
 ```
 
 ### CI

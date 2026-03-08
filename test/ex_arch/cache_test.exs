@@ -10,6 +10,7 @@ defmodule ExArch.CacheTest do
     :ok
   end
 
+  @tag :skip_when_no_cache
   test "cache hit occurs on second build when fingerprint is unchanged" do
     config =
       Config.load!("fixtures/arch_test.exs")
@@ -44,6 +45,7 @@ defmodule ExArch.CacheTest do
     assert stats_second.cache_hit? == false
   end
 
+  @tag :skip_when_no_cache
   test "cache invalidates when BEAM mtimes change in analyzed ebin dirs" do
     config =
       Config.load!("fixtures/arch_test.exs")
@@ -73,5 +75,50 @@ defmodule ExArch.CacheTest do
 
     {_graph, stats_third} = Cache.get_or_build(config)
     assert stats_third.cache_hit? == false
+  end
+
+  @tag :skip_when_no_cache
+  test "cache invalidates when a non-max BEAM mtime changes (max mtime pinned)" do
+    config =
+      Config.load!("fixtures/arch_test.exs")
+      |> Map.put(:include, ["ExArchFixture.Ok.*"])
+
+    {_graph, stats_first} = Cache.get_or_build(config)
+    {_graph, stats_second} = Cache.get_or_build(config)
+
+    assert stats_first.cache_hit? == false
+    assert stats_second.cache_hit? == true
+
+    beam_files =
+      config
+      |> Builder.discover_ebin_dirs()
+      |> Enum.flat_map(&Path.wildcard(Path.join(&1, "*.beam")))
+      |> Enum.sort()
+
+    [beam_a, beam_b | _rest] = beam_files
+
+    pinned_max =
+      NaiveDateTime.utc_now()
+      |> NaiveDateTime.add(60, :second)
+      |> NaiveDateTime.to_erl()
+
+    File.touch!(beam_a, pinned_max)
+
+    {_graph, stats_third} = Cache.get_or_build(config)
+    {_graph, stats_fourth} = Cache.get_or_build(config)
+
+    assert stats_third.cache_hit? == false
+    assert stats_fourth.cache_hit? == true
+
+    less_than_pinned_max =
+      pinned_max
+      |> NaiveDateTime.from_erl!()
+      |> NaiveDateTime.add(-10, :second)
+      |> NaiveDateTime.to_erl()
+
+    File.touch!(beam_b, less_than_pinned_max)
+
+    {_graph, stats_fifth} = Cache.get_or_build(config)
+    assert stats_fifth.cache_hit? == false
   end
 end

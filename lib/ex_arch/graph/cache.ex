@@ -95,20 +95,25 @@ defmodule ExArch.Graph.Cache do
   end
 
   defp dir_fingerprint(dir) do
-    beams = Path.wildcard(Path.join(dir, "*.beam"))
+    beams =
+      dir
+      |> Path.join("*.beam")
+      |> Path.wildcard()
+      |> Enum.sort()
 
-    {max_mtime, count} =
-      Enum.reduce(beams, {0, 0}, fn beam, {current_max, count} ->
+    {max_mtime, count, stat_hash} =
+      Enum.reduce(beams, {0, 0, 0}, fn beam, {current_max, count, stat_hash} ->
         case File.stat(beam, time: :posix) do
           {:ok, stat} ->
-            {max(current_max, stat.mtime), count + 1}
+            file_hash = :erlang.phash2({Path.basename(beam), stat.mtime, stat.size})
+            {max(current_max, stat.mtime), count + 1, :erlang.phash2({stat_hash, file_hash})}
 
           {:error, _reason} ->
-            {current_max, count}
+            {current_max, count, stat_hash}
         end
       end)
 
-    {dir, max_mtime, count}
+    {dir, max_mtime, count, stat_hash}
   end
 
   defp entry_key(key), do: {__MODULE__, key}
