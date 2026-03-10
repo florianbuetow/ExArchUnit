@@ -11,7 +11,7 @@ Enforce architecture rules in Elixir projects — without touching production co
 ```elixir
 defp deps do
   [
-    {:ex_arch_unit, "~> 0.1.0"}
+    {:ex_arch_unit, "~> 0.1.0", only: [:dev, :test], runtime: false}
   ]
 end
 ```
