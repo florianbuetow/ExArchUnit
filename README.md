@@ -1,6 +1,6 @@
 # ExArchUnit
 
-[![Hex.pm](https://img.shields.io/badge/hex.pm-0.1.0-purple)](https://hex.pm/packages/ex_arch_unit) [![Docs](https://img.shields.io/badge/docs-hexdocs-blue)](https://hexdocs.pm/ex_arch_unit) ![Coverage](https://img.shields.io/badge/Coverage-93.2%25-brightgreen) ![Made with AI](https://img.shields.io/badge/Made%20with-AI-333333?labelColor=f00) ![Verified by Humans](https://img.shields.io/badge/Verified%20by-Humans-333333?labelColor=brightgreen)
+[![Hex.pm](https://img.shields.io/badge/hex.pm-0.1.0-orange)](https://hex.pm/packages/ex_arch_unit) [![Docs](https://img.shields.io/badge/docs-hexdocs-blue)](https://hexdocs.pm/ex_arch_unit) ![Coverage](https://img.shields.io/badge/Coverage-93.2%25-brightgreen) ![Made with AI](https://img.shields.io/badge/Made%20with-AI-333333?labelColor=f00) ![Verified by Humans](https://img.shields.io/badge/Verified%20by-Humans-333333?labelColor=brightgreen)
 
 Enforce architecture rules in Elixir projects — without touching production code. Define layer boundaries in a standalone `arch.exs` file, run `mix arch.check`, and get CI-friendly output. Rules live outside your application, so your production modules stay clean.
 
