@@ -1,9 +1,9 @@
-defmodule ExArch.CacheTest do
+defmodule ExArchUnit.CacheTest do
   use ExUnit.Case, async: false
 
-  alias ExArch.Config
-  alias ExArch.Graph.Builder
-  alias ExArch.Graph.Cache
+  alias ExArchUnit.Config
+  alias ExArchUnit.Graph.Builder
+  alias ExArchUnit.Graph.Cache
 
   setup do
     Cache.clear()

@@ -3,15 +3,17 @@ defmodule Mix.Tasks.Arch.Bench do
 
   @shortdoc "Run the synthetic umbrella benchmark"
 
-  @moduledoc """
+  @moduledoc false
+
+  @doc """
   Runs the synthetic umbrella benchmark.
 
       mix arch.bench
 
   Environment variables:
-  - `ExArch_BENCH_APPS` (default: 4)
-  - `ExArch_BENCH_MODULES_PER_APP` (default: 60)
-  - `ExArch_BENCH_KEEP_TMP=1` to keep the generated umbrella project
+  - `ExArchUnit_BENCH_APPS` (default: 4)
+  - `ExArchUnit_BENCH_MODULES_PER_APP` (default: 60)
+  - `ExArchUnit_BENCH_KEEP_TMP=1` to keep the generated umbrella project
   """
 
   @impl Mix.Task

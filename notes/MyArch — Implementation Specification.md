@@ -1,4 +1,4 @@
-# ExArch — Implementation Specification
+# ExArchUnit — Implementation Specification
 
 ## 0. Purpose
 
@@ -23,7 +23,7 @@ Implement an ArchUnit-like architecture testing library for Elixir that is consu
 ### 1.3 Default configuration location
 
 * `arch.exs` at the repository root alongside `mix.exs`.
-* `use ExArch` defaults to `config: "arch.exs"` and auto-discovers it if not provided.
+* `use ExArchUnit` defaults to `config: "arch.exs"` and auto-discovers it if not provided.
 
 ---
 
@@ -31,32 +31,32 @@ Implement an ArchUnit-like architecture testing library for Elixir that is consu
 
 ### 2.1 Module layout
 
-* `ExArch` (public macros, ExUnit integration)
-* `ExArch.Config` (load/validate `arch.exs`)
-* `ExArch.Config.DSL` (DSL functions for `arch.exs` evaluation, accumulates config via `Process` dictionary)
-* `ExArch.Graph` (internal graph struct, integer-ID interning, SCC cycle detection)
-* `ExArch.Graph.Builder` (**only module that talks to `:xref` and BEAM loading**)
-* `ExArch.Graph.Cache` (global cache + invalidation)
-* `ExArch.Selector` (compiles and matches wildcard/exact module selectors)
-* `ExArch.Rule` (internal rule struct)
-* `ExArch.Rule.Evaluator` (rule evaluation over graph, selector memoization)
-* `ExArch.Reporter` (formats violations)
+* `ExArchUnit` (public macros, ExUnit integration)
+* `ExArchUnit.Config` (load/validate `arch.exs`)
+* `ExArchUnit.Config.DSL` (DSL functions for `arch.exs` evaluation, accumulates config via `Process` dictionary)
+* `ExArchUnit.Graph` (internal graph struct, integer-ID interning, SCC cycle detection)
+* `ExArchUnit.Graph.Builder` (**only module that talks to `:xref` and BEAM loading**)
+* `ExArchUnit.Graph.Cache` (global cache + invalidation)
+* `ExArchUnit.Selector` (compiles and matches wildcard/exact module selectors)
+* `ExArchUnit.Rule` (internal rule struct)
+* `ExArchUnit.Rule.Evaluator` (rule evaluation over graph, selector memoization)
+* `ExArchUnit.Reporter` (formats violations)
 
 ### 2.2 Strict boundaries
 
-* `:xref` interaction and any Erlang query syntax lives only in `ExArch.Graph.Builder`.
-* Rules operate only on `ExArch.Graph` in-memory representation.
+* `:xref` interaction and any Erlang query syntax lives only in `ExArchUnit.Graph.Builder`.
+* Rules operate only on `ExArchUnit.Graph` in-memory representation.
 
 ---
 
 ## 3. Core Decision: ExUnit-first with shared fixture
 
-### 3.1 `use ExArch` behavior
+### 3.1 `use ExArchUnit` behavior
 
-`use ExArch` injects:
+`use ExArchUnit` injects:
 
 * config load + validation (once per module)
-* `setup_all` that obtains the graph from `ExArch.Graph.Cache.get_or_build/1`
+* `setup_all` that obtains the graph from `ExArchUnit.Graph.Cache.get_or_build/1`
 * imports rule macros that read the graph from ExUnit context
 
 ### 3.2 Context contract
@@ -76,7 +76,7 @@ Macros (e.g. `forbid/2`) must:
 
 If the ExUnit context is unavailable (e.g. called outside `setup_all`), macros
 fall back to loading config and building/fetching the graph on demand via
-`ExArch.Config.load!/1` and `ExArch.Graph.Cache.get_or_build/1`.
+`ExArchUnit.Config.load!/1` and `ExArchUnit.Graph.Cache.get_or_build/1`.
 
 ---
 
@@ -111,7 +111,7 @@ Rationale: avoid “false” violations that come from non-semantic imports/alia
 
 ---
 
-## 5. Graph Builder (`ExArch.Graph.Builder`)
+## 5. Graph Builder (`ExArchUnit.Graph.Builder`)
 
 ### 5.1 Inputs
 
@@ -146,7 +146,7 @@ Rationale: avoid “false” violations that come from non-semantic imports/alia
 * `edges_count`
 * `cache_hit?` (set by cache layer)
 
-Optional: enable printing stats when `ExArch_PROFILE=1`.
+Optional: enable printing stats when `ExArchUnit_PROFILE=1`.
 
 ### 5.5 Determinism
 
@@ -325,12 +325,12 @@ ExUnit can run async:
 * Reads from `:persistent_term` are safe.
 * Build must be guarded by a global lock so only one builder runs:
 
-  * `:global.trans({:ExArch_build, key}, fn -> ... end)`
+  * `:global.trans({:ExArchUnit_build, key}, fn -> ... end)`
   * or ETS-based mutex
 
 ### 9.7 Escape hatches
 
-* `ExArch_NO_CACHE=1` forces rebuild every time.
+* `ExArchUnit_NO_CACHE=1` forces rebuild every time.
 * Optional future: `mix arch.clean` clears cache.
 
 ### 9.8 “Current code” guarantee
@@ -352,13 +352,13 @@ This design ensures analysis is current because:
 
 ### 10.2 DSL implementation
 
-`ExArch.Config.load!/1` prepends `import ExArch.Config.DSL` to the file content
+`ExArchUnit.Config.load!/1` prepends `import ExArchUnit.Config.DSL` to the file content
 and evaluates it via `Code.eval_string/3`. This injects the DSL functions
 (`layers/1`, `layer/2`, `allow/2`, `forbid/2`, `include/1`, `exclude/1`,
 `include_deps/1`, `include_behaviours/1`, `cache/1`, `builder/1`) into scope.
 
-`ExArch.Config.DSL` accumulates state in the `Process` dictionary during
-evaluation and returns the final `%ExArch.Config{}` via `collected_config/0`.
+`ExArchUnit.Config.DSL` accumulates state in the `Process` dictionary during
+evaluation and returns the final `%ExArchUnit.Config{}` via `collected_config/0`.
 
 This keeps `arch.exs` declarative — users write:
 
@@ -376,12 +376,12 @@ No `use`, `import`, or `require` needed inside `arch.exs`.
 
 ### 10.3 Config fields (v0.1)
 
-`%ExArch.Config{}` struct fields:
+`%ExArchUnit.Config{}` struct fields:
 
 * `path`: absolute path to the loaded `arch.exs` file
 * `source_hash`: SHA-256 hex digest of `arch.exs` content (or a hash of `{:default_config, path}` if file is missing)
 * `layers`: `%{atom() => String.t()}` — layer name to selector pattern
-* `layer_rules`: `[%ExArch.Rule{}]` — rules defined inside `layers do ... end` in `arch.exs`
+* `layer_rules`: `[%ExArchUnit.Rule{}]` — rules defined inside `layers do ... end` in `arch.exs`
 * `include`: `[String.t()]` — selector whitelist (default `[]`, meaning include all)
 * `exclude`: `[String.t()]` — selector blacklist (default `[]`)
 * `include_deps`: `boolean()` — whether to analyze dependency BEAMs (default `false`)
@@ -436,15 +436,15 @@ No `use`, `import`, or `require` needed inside `arch.exs`.
 
 ## 13. Implementation Checklist (ordered)
 
-1. Implement `%ExArch.Graph{}` + module ID interning.
+1. Implement `%ExArchUnit.Graph{}` + module ID interning.
 2. Implement selector matcher and layer resolution.
-3. Implement `ExArch.Config` loader (`arch.exs`) + validation.
-4. Implement `ExArch.Graph.Builder` using `:xref` and bulk edge extraction.
-5. Implement `ExArch.Graph.Cache` with fingerprint + locking.
-6. Implement `ExArch.Rule.Evaluator` for `forbid` and SCC cycle detection.
-7. Implement `ExArch` macros + injected `setup_all`.
-8. Implement `ExArch.Reporter` formatting and deterministic ordering.
-9. Add profiling stats + `ExArch_PROFILE=1`.
+3. Implement `ExArchUnit.Config` loader (`arch.exs`) + validation.
+4. Implement `ExArchUnit.Graph.Builder` using `:xref` and bulk edge extraction.
+5. Implement `ExArchUnit.Graph.Cache` with fingerprint + locking.
+6. Implement `ExArchUnit.Rule.Evaluator` for `forbid` and SCC cycle detection.
+7. Implement `ExArchUnit` macros + injected `setup_all`.
+8. Implement `ExArchUnit.Reporter` formatting and deterministic ordering.
+9. Add profiling stats + `ExArchUnit_PROFILE=1`.
 10. Add CI + docs + publish to Hex.
 
 This document defines the required behavior, boundaries, and performance/correctness mechanisms to implement the tool for large codebases and short feedback loops.

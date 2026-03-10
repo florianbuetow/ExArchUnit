@@ -1,6 +1,6 @@
-defmodule ExArch.SmokeTest do
+defmodule ExArchUnit.SmokeTest do
   use ExUnit.Case, async: false
-  use ExArch, config: "fixtures/arch_smoke.exs", enforce_config_rules: false
+  use ExArchUnit, config: "fixtures/arch_smoke.exs", enforce_config_rules: false
 
   test "minimal end-to-end violation is readable" do
     error =

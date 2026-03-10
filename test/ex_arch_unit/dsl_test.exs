@@ -1,8 +1,8 @@
-defmodule ExArch.Config.DSLTest do
+defmodule ExArchUnit.Config.DSLTest do
   use ExUnit.Case, async: true
 
-  alias ExArch.Config
-  alias ExArch.Config.DSL
+  alias ExArchUnit.Config
+  alias ExArchUnit.Config.DSL
 
   setup do
     DSL.reset!()
@@ -161,7 +161,7 @@ defmodule ExArch.Config.DSLTest do
   # --- collected_config/0 fallback ---
 
   test "collected_config/0 returns default Config when process dict is empty" do
-    Process.delete({ExArch.Config.DSL, :config})
+    Process.delete({ExArchUnit.Config.DSL, :config})
     config = DSL.collected_config()
     assert %Config{} = config
     assert config.layers == %{}

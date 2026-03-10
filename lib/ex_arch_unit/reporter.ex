@@ -1,11 +1,11 @@
-defmodule ExArch.Reporter do
+defmodule ExArchUnit.Reporter do
   @moduledoc """
   Formats architecture rule violations into human-readable messages
   for ExUnit assertion output.
   """
 
-  alias ExArch.Graph
-  alias ExArch.Rule.Evaluator
+  alias ExArchUnit.Graph
+  alias ExArchUnit.Rule.Evaluator
 
   @doc "Formats a forbid-rule violation message listing offending dependencies."
   @spec format_forbid(term(), term(), [{module(), module()}]) :: String.t()

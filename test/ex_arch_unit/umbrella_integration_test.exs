@@ -1,9 +1,9 @@
-defmodule ExArch.UmbrellaIntegrationTest do
+defmodule ExArchUnit.UmbrellaIntegrationTest do
   use ExUnit.Case, async: false
 
-  alias ExArch.Config
-  alias ExArch.Graph.Builder
-  alias ExArch.Rule.Evaluator
+  alias ExArchUnit.Config
+  alias ExArchUnit.Graph.Builder
+  alias ExArchUnit.Rule.Evaluator
 
   @moduletag :umbrella
 
@@ -42,8 +42,8 @@ defmodule ExArch.UmbrellaIntegrationTest do
 
         assert Enum.any?(rule_violations, fn %{violations: edges} ->
                  Enum.any?(edges, fn {source, target} ->
-                   ExArch.Graph.module_name(source) == "UmbrellaFixture.AppA.Service" and
-                     ExArch.Graph.module_name(target) == "UmbrellaFixture.AppB.Repository"
+                   ExArchUnit.Graph.module_name(source) == "UmbrellaFixture.AppA.Service" and
+                     ExArchUnit.Graph.module_name(target) == "UmbrellaFixture.AppB.Repository"
                  end)
                end)
 

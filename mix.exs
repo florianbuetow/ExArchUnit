@@ -6,11 +6,12 @@ defmodule ExArchUnit.MixProject do
       app: :ex_arch_unit,
       version: "0.1.0",
       elixir: "~> 1.16",
+      elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [
         ignore_modules: [
-          ExArch.Benchmark.SyntheticUmbrella,
+          ExArchUnit.Benchmark.SyntheticUmbrella,
           Mix.Tasks.Arch.Bench,
           Mix.Tasks.Arch.Check,
           ExArchFixture.Bad.Domain.Service,
@@ -35,7 +36,8 @@ defmodule ExArchUnit.MixProject do
         source_ref: "v0.1.0",
         source_url: "https://github.com/florianbuetow/ExArchUnit",
         main: "readme",
-        extras: ["README.md", "CHANGELOG.md"]
+        extras: ["README.md", "CHANGELOG.md", "LICENSE"],
+        skip_undefined_reference_warnings_on: ["CHANGELOG.md"]
       ]
     ]
   end
@@ -45,6 +47,9 @@ defmodule ExArchUnit.MixProject do
       extra_applications: [:logger, :tools]
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 
   defp deps do
     [
@@ -58,7 +63,16 @@ defmodule ExArchUnit.MixProject do
       links: %{
         "GitHub" => "https://github.com/florianbuetow/ExArchUnit"
       },
-      files: ~w(lib mix.exs README.md LICENSE CHANGELOG.md)
+      files: ~w(
+        lib/ex_arch_unit.ex
+        lib/ex_arch_unit
+        lib/mix/tasks/arch.check.ex
+        mix.exs
+        README.md
+        LICENSE
+        CHANGELOG.md
+      ),
+      exclude_patterns: [~r/benchmark/]
     ]
   end
 end

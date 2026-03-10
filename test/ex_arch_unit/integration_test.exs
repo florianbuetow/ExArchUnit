@@ -1,6 +1,6 @@
-defmodule ExArch.IntegrationTest do
+defmodule ExArchUnit.IntegrationTest do
   use ExUnit.Case, async: false
-  use ExArch, config: "fixtures/arch_test.exs", enforce_config_rules: false
+  use ExArchUnit, config: "fixtures/arch_test.exs", enforce_config_rules: false
 
   test "forbid macro surfaces ExUnit assertion failures" do
     assert_raise ExUnit.AssertionError, fn ->

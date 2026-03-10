@@ -1,7 +1,7 @@
-defmodule ExArch.BuilderTest do
+defmodule ExArchUnit.BuilderTest do
   use ExUnit.Case, async: true
 
-  alias ExArch.Graph.Builder
+  alias ExArchUnit.Graph.Builder
 
   test "discovers umbrella apps from filesystem fallback scan" do
     tmp_dir =

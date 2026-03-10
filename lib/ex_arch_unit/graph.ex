@@ -1,4 +1,4 @@
-defmodule ExArch.Graph do
+defmodule ExArchUnit.Graph do
   @moduledoc """
   Integer-indexed module dependency graph with adjacency-set representation.
 

@@ -1,8 +1,8 @@
-defmodule ExArch.ConfigValidationTest do
+defmodule ExArchUnit.ConfigValidationTest do
   use ExUnit.Case, async: true
 
-  alias ExArch.Config
-  alias ExArch.Rule
+  alias ExArchUnit.Config
+  alias ExArchUnit.Rule
 
   # --- load/1 tuple wrapper ---
 

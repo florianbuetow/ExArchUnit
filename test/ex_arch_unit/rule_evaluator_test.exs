@@ -1,9 +1,9 @@
-defmodule ExArch.RuleEvaluatorTest do
+defmodule ExArchUnit.RuleEvaluatorTest do
   use ExUnit.Case, async: false
 
-  alias ExArch.Config
-  alias ExArch.Graph.Cache
-  alias ExArch.Rule.Evaluator
+  alias ExArchUnit.Config
+  alias ExArchUnit.Graph.Cache
+  alias ExArchUnit.Rule.Evaluator
 
   setup do
     Cache.clear()
@@ -29,7 +29,7 @@ defmodule ExArch.RuleEvaluatorTest do
     assert {"ExArchFixture.Bad.Domain.Service", "ExArchFixture.Bad.Web.Endpoint"} in Enum.map(
              violations,
              fn {source, target} ->
-               {ExArch.Graph.module_name(source), ExArch.Graph.module_name(target)}
+               {ExArchUnit.Graph.module_name(source), ExArchUnit.Graph.module_name(target)}
              end
            )
   end
@@ -65,7 +65,7 @@ defmodule ExArch.RuleEvaluatorTest do
              Evaluator.assert_no_cycles(graph, config, prefix: "ExArchFixture.Cycle.*")
 
     assert Enum.any?(cycles, fn cycle ->
-             names = Enum.map(cycle, &ExArch.Graph.module_name/1)
+             names = Enum.map(cycle, &ExArchUnit.Graph.module_name/1)
              "ExArchFixture.Cycle.A" in names and "ExArchFixture.Cycle.B" in names
            end)
   end

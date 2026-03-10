@@ -43,11 +43,11 @@ ci: code-format test build
 
 # ExUnit suite with coverage and graph build profiling
 test:
-    ExArch_PROFILE=1 mix test --cover
+    ExArchUnit_PROFILE=1 mix test --cover
 
 # Same as test but with graph cache disabled (forces xref rebuild)
 test-nocache:
-    ExArch_NO_CACHE=1 ExArch_PROFILE=1 mix test --cover
+    ExArchUnit_NO_CACHE=1 ExArchUnit_PROFILE=1 mix test --cover
 
 #
 # ── Code Quality ───────────────────────────────────────────────────────

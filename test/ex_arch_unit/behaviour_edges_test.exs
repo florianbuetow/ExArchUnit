@@ -1,9 +1,9 @@
-defmodule ExArch.BehaviourEdgesTest do
+defmodule ExArchUnit.BehaviourEdgesTest do
   use ExUnit.Case, async: false
 
-  alias ExArch.Config
-  alias ExArch.Graph.Builder
-  alias ExArch.Rule.Evaluator
+  alias ExArchUnit.Config
+  alias ExArchUnit.Graph.Builder
+  alias ExArchUnit.Rule.Evaluator
 
   test "behaviour edges are included only when include_behaviours is enabled" do
     base_config =
@@ -38,8 +38,8 @@ defmodule ExArch.BehaviourEdgesTest do
              )
 
     assert Enum.any?(violations, fn {source, target} ->
-             ExArch.Graph.module_name(source) == "ExArchFixture.Behaviour.Impl" and
-               ExArch.Graph.module_name(target) == "ExArchFixture.Behaviour.Contract"
+             ExArchUnit.Graph.module_name(source) == "ExArchFixture.Behaviour.Impl" and
+               ExArchUnit.Graph.module_name(target) == "ExArchFixture.Behaviour.Contract"
            end)
   end
 end

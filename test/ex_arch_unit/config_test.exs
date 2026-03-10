@@ -1,7 +1,7 @@
-defmodule ExArch.ConfigTest do
+defmodule ExArchUnit.ConfigTest do
   use ExUnit.Case, async: true
 
-  alias ExArch.Config
+  alias ExArchUnit.Config
 
   test "loads default config when arch file does not exist" do
     config =

@@ -1,4 +1,4 @@
-defmodule ExArch.Rule do
+defmodule ExArchUnit.Rule do
   @moduledoc """
   Struct representing a layer dependency rule (`:allow` or `:forbid`).
   """

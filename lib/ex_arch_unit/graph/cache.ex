@@ -1,4 +1,4 @@
-defmodule ExArch.Graph.Cache do
+defmodule ExArchUnit.Graph.Cache do
   @moduledoc """
   `:persistent_term`-backed cache for the dependency graph.
 
@@ -6,15 +6,15 @@ defmodule ExArch.Graph.Cache do
   BEAM file mtimes, or filter options change.
   """
 
-  alias ExArch.Config
-  alias ExArch.Graph.Builder
+  alias ExArchUnit.Config
+  alias ExArchUnit.Graph.Builder
 
   @keys_entry {__MODULE__, :keys}
 
   @type stats :: Builder.stats()
 
   @doc "Returns the cached graph or builds a fresh one if the cache is stale."
-  @spec get_or_build(Config.t()) :: {ExArch.Graph.t(), stats()}
+  @spec get_or_build(Config.t()) :: {ExArchUnit.Graph.t(), stats()}
   def get_or_build(%Config{} = config) do
     if no_cache?(config) do
       Builder.build(config)
@@ -62,7 +62,7 @@ defmodule ExArch.Graph.Cache do
   end
 
   defp no_cache?(%Config{} = config) do
-    (System.get_env("ExArch_NO_CACHE") || "")
+    (System.get_env("ExArchUnit_NO_CACHE") || "")
     |> String.downcase()
     |> then(&(&1 in ["1", "true", "yes"]))
     |> Kernel.or(not config.cache)

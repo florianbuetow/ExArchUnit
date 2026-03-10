@@ -1,12 +1,10 @@
-defmodule ExArch.Benchmark.SyntheticUmbrella do
-  @moduledoc """
-  Reproducible benchmark for graph build and cache-hit timing on a synthetic umbrella project.
-  """
+defmodule ExArchUnit.Benchmark.SyntheticUmbrella do
+  @moduledoc false
 
-  alias ExArch.Config
-  alias ExArch.Graph
-  alias ExArch.Graph.Cache
-  alias ExArch.Rule.Evaluator
+  alias ExArchUnit.Config
+  alias ExArchUnit.Graph
+  alias ExArchUnit.Graph.Cache
+  alias ExArchUnit.Rule.Evaluator
 
   @spec run(keyword()) :: map()
   def run(opts \\ []) do

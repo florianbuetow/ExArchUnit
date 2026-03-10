@@ -18,13 +18,13 @@ defmodule Mix.Tasks.Arch.Check do
 
   ## Environment variables
 
-    * `ExArch_PROFILE=1` — print build/evaluation stats
+    * `ExArchUnit_PROFILE=1` — print build/evaluation stats
   """
 
-  alias ExArch.Config
-  alias ExArch.Graph.Cache
-  alias ExArch.Reporter
-  alias ExArch.Rule.Evaluator
+  alias ExArchUnit.Config
+  alias ExArchUnit.Graph.Cache
+  alias ExArchUnit.Reporter
+  alias ExArchUnit.Rule.Evaluator
 
   @impl Mix.Task
   def run(args) do
@@ -39,7 +39,7 @@ defmodule Mix.Tasks.Arch.Check do
     config_path = Keyword.get(opts, :config, Config.default_config_path())
 
     if Keyword.get(opts, :no_cache, false) do
-      System.put_env("ExArch_NO_CACHE", "1")
+      System.put_env("ExArchUnit_NO_CACHE", "1")
     end
 
     config = Config.load!(config_path)
@@ -55,7 +55,7 @@ defmodule Mix.Tasks.Arch.Check do
         Mix.raise("Architecture rules violated. See above for details.")
     end
 
-    if System.get_env("ExArch_PROFILE") == "1" do
+    if System.get_env("ExArchUnit_PROFILE") == "1" do
       Mix.shell().info("Stats: #{inspect(stats)}")
     end
   end

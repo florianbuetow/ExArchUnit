@@ -1,10 +1,10 @@
-defmodule ExArch.Config.DSL do
+defmodule ExArchUnit.Config.DSL do
   @moduledoc """
   DSL functions for declaring architecture rules in `arch.exs` config files.
 
   These functions are imported into the config file at evaluation time.
   They store configuration in the process dictionary and are collected
-  into an `ExArch.Config` struct by `collected_config/0`.
+  into an `ExArchUnit.Config` struct by `collected_config/0`.
 
   ## Example `arch.exs`
 
@@ -20,8 +20,8 @@ defmodule ExArch.Config.DSL do
       cache true
   """
 
-  alias ExArch.Config
-  alias ExArch.Rule
+  alias ExArchUnit.Config
+  alias ExArchUnit.Rule
 
   @store_key {__MODULE__, :config}
 

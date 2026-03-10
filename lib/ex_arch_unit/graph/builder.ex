@@ -1,6 +1,6 @@
-defmodule ExArch.Graph.Builder do
+defmodule ExArchUnit.Graph.Builder do
   @moduledoc """
-  Builds an `ExArch.Graph` from compiled BEAM files using `:xref`.
+  Builds an `ExArchUnit.Graph` from compiled BEAM files using `:xref`.
 
   Discovers ebin directories, loads modules into an isolated xref server,
   extracts call edges (and optionally `@behaviour` edges), then applies
@@ -8,9 +8,9 @@ defmodule ExArch.Graph.Builder do
   """
   @compile {:no_warn_undefined, :xref}
 
-  alias ExArch.Config
-  alias ExArch.Graph
-  alias ExArch.Selector
+  alias ExArchUnit.Config
+  alias ExArchUnit.Graph
+  alias ExArchUnit.Selector
 
   @type stats :: %{
           total_ms: non_neg_integer(),
@@ -266,10 +266,10 @@ defmodule ExArch.Graph.Builder do
   end
 
   defp maybe_profile!(stats) do
-    profile_val = (System.get_env("ExArch_PROFILE") || "") |> String.downcase()
+    profile_val = (System.get_env("ExArchUnit_PROFILE") || "") |> String.downcase()
 
     if profile_val in ["1", "true", "yes"] do
-      IO.puts("[ex_arch] graph stats: #{inspect(stats)}")
+      IO.puts("[ex_arch_unit] graph stats: #{inspect(stats)}")
     end
   end
 

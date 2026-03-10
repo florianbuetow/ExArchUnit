@@ -1,9 +1,9 @@
-defmodule ExArch.ConfigRuleEnforcementTest do
+defmodule ExArchUnit.ConfigRuleEnforcementTest do
   use ExUnit.Case, async: false
 
-  alias ExArch.Config
-  alias ExArch.Graph.Cache
-  alias ExArch.Rule.Evaluator
+  alias ExArchUnit.Config
+  alias ExArchUnit.Graph.Cache
+  alias ExArchUnit.Rule.Evaluator
 
   setup do
     Cache.clear()
@@ -22,14 +22,14 @@ defmodule ExArch.ConfigRuleEnforcementTest do
     assert length(layer_rule_violations) > 0
   end
 
-  test "use ExArch enforces valid config rules in setup_all" do
-    assert Code.ensure_loaded?(ExArch.ConfigRuleEnforcementPassTest)
+  test "use ExArchUnit enforces valid config rules in setup_all" do
+    assert Code.ensure_loaded?(ExArchUnit.ConfigRuleEnforcementPassTest)
   end
 end
 
-defmodule ExArch.ConfigRuleEnforcementPassTest do
+defmodule ExArchUnit.ConfigRuleEnforcementPassTest do
   use ExUnit.Case, async: false
-  use ExArch, config: "fixtures/arch_ok.exs"
+  use ExArchUnit, config: "fixtures/arch_ok.exs"
 
   test "setup_all passed config rule enforcement" do
     assert true

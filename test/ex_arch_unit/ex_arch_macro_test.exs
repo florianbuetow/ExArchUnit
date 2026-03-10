@@ -1,6 +1,6 @@
-defmodule ExArch.MacroEdgeCaseTest do
+defmodule ExArchUnit.MacroEdgeCaseTest do
   use ExUnit.Case, async: false
-  use ExArch, config: "fixtures/arch_test.exs", enforce_config_rules: false
+  use ExArchUnit, config: "fixtures/arch_test.exs", enforce_config_rules: false
 
   # --- assert_no_cycles with :in option ---
 

@@ -1,4 +1,4 @@
-defmodule ExArch.Rule.Evaluator do
+defmodule ExArchUnit.Rule.Evaluator do
   @moduledoc """
   Evaluates architecture rules against a dependency graph.
 
@@ -7,10 +7,10 @@ defmodule ExArch.Rule.Evaluator do
   layer rules at once.
   """
 
-  alias ExArch.Config
-  alias ExArch.Graph
-  alias ExArch.Rule
-  alias ExArch.Selector
+  alias ExArchUnit.Config
+  alias ExArchUnit.Graph
+  alias ExArchUnit.Rule
+  alias ExArchUnit.Selector
 
   @type edge_violation :: {module(), module()}
   @type selector :: String.t() | atom() | [String.t() | atom()]

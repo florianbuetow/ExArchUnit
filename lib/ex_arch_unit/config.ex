@@ -1,13 +1,13 @@
-defmodule ExArch.Config do
+defmodule ExArchUnit.Config do
   @moduledoc """
   Loads, validates, and represents an ExArchUnit configuration.
 
   A configuration is typically declared in an `arch.exs` file using the
-  `ExArch.Config.DSL` and loaded with `load!/1` or `load/1`.
+  `ExArchUnit.Config.DSL` and loaded with `load!/1` or `load/1`.
   """
 
-  alias ExArch.Config.DSL
-  alias ExArch.Rule
+  alias ExArchUnit.Config.DSL
+  alias ExArchUnit.Rule
 
   @default_config_path "arch.exs"
 
@@ -69,7 +69,7 @@ defmodule ExArch.Config do
     config =
       if File.exists?(config_path) do
         source = File.read!(config_path)
-        script = "import ExArch.Config.DSL\n" <> source
+        script = "import ExArchUnit.Config.DSL\n" <> source
         _ = Code.eval_string(script, [], file: config_path)
         %{DSL.collected_config() | path: config_path, source_hash: sha256_file(config_path)}
       else

@@ -1,4 +1,4 @@
-# ExArch — Architecture Testing for Elixir
+# ExArchUnit — Architecture Testing for Elixir
 
 **Design & Implementation Document (v0.1)**
 
@@ -48,7 +48,7 @@ mix test
 ```elixir
 defmodule ArchitectureTest do
   use ExUnit.Case, async: true
-  use ExArch, config: "arch.exs"
+  use ExArchUnit, config: "arch.exs"
 
   test "domain does not depend on web" do
     forbid "MyApp.Domain.*", depends_on: "MyAppWeb.*"
@@ -94,26 +94,26 @@ end
 
 ### DSL Evaluation Mechanism
 
-`ExArch.Config.load!/1` prepends `import ExArch.Config.DSL` to the file
+`ExArchUnit.Config.load!/1` prepends `import ExArchUnit.Config.DSL` to the file
 content and evaluates it via `Code.eval_string/3`. This injects the DSL
 functions (`layers/1`, `layer/2`, `allow/2`, `forbid/2`, `include/1`,
 `exclude/1`, `include_deps/1`, `include_behaviours/1`, `cache/1`,
 `builder/1`) into scope without requiring any `use`, `import`, or
 `require` inside `arch.exs`.
 
-`ExArch.Config.DSL` accumulates state in the `Process` dictionary during
-evaluation and returns the final `%ExArch.Config{}` via `collected_config/0`.
+`ExArchUnit.Config.DSL` accumulates state in the `Process` dictionary during
+evaluation and returns the final `%ExArchUnit.Config{}` via `collected_config/0`.
 
 **Implementation:**
 
 ```elixir
-# ExArch.Config
+# ExArchUnit.Config
 def load!(path) do
   config_path = Path.expand(path)
   DSL.reset!(%Config{path: config_path, source_hash: "missing"})
 
   source = File.read!(config_path)
-  script = "import ExArch.Config.DSL\n" <> source
+  script = "import ExArchUnit.Config.DSL\n" <> source
   _ = Code.eval_string(script, [], file: config_path)
 
   config = %{DSL.collected_config() | path: config_path, source_hash: sha256_file(config_path)}
@@ -131,22 +131,22 @@ with descriptive messages.
 
 ### Public API Layer
 
-- `ExArch` — `use ExArch` macro, rule macros: `forbid/2`, `allow/2`, `assert_no_cycles/1`
+- `ExArchUnit` — `use ExArchUnit` macro, rule macros: `forbid/2`, `allow/2`, `assert_no_cycles/1`
 - Injects `setup_all` with config rule auto-enforcement
 
 ### Engine Layer
 
 Pure logic, no ExUnit dependency:
 
-- `ExArch.Config` — loads and validates `arch.exs`
-- `ExArch.Config.DSL` — DSL functions, accumulates config via `Process` dictionary
-- `ExArch.Graph` — graph struct with integer-ID interning, SCC cycle detection
-- `ExArch.Graph.Builder` — `:xref` isolation and BEAM discovery
-- `ExArch.Graph.Cache` — `:persistent_term` cache with fingerprint invalidation
-- `ExArch.Selector` — compiles and matches wildcard/exact module selectors
-- `ExArch.Rule` — internal rule struct
-- `ExArch.Rule.Evaluator` — rule evaluation with selector memoization
-- `ExArch.Reporter` — deterministic violation formatting
+- `ExArchUnit.Config` — loads and validates `arch.exs`
+- `ExArchUnit.Config.DSL` — DSL functions, accumulates config via `Process` dictionary
+- `ExArchUnit.Graph` — graph struct with integer-ID interning, SCC cycle detection
+- `ExArchUnit.Graph.Builder` — `:xref` isolation and BEAM discovery
+- `ExArchUnit.Graph.Cache` — `:persistent_term` cache with fingerprint invalidation
+- `ExArchUnit.Selector` — compiles and matches wildcard/exact module selectors
+- `ExArchUnit.Rule` — internal rule struct
+- `ExArchUnit.Rule.Evaluator` — rule evaluation with selector memoization
+- `ExArchUnit.Reporter` — deterministic violation formatting
 
 ### Dependency Extraction
 
@@ -158,7 +158,7 @@ Uses Erlang `:xref` to load compiled BEAM files.
 - Fast for large systems
 - Reflects actual compiled dependencies, not textual imports
 
-All `:xref` usage is fully isolated in `ExArch.Graph.Builder`. No other
+All `:xref` usage is fully isolated in `ExArchUnit.Graph.Builder`. No other
 module uses `:xref` directly.
 
 ---
@@ -171,15 +171,15 @@ The graph is built **once per test run**, not per test or per test module.
 
 ### Implementation
 
-`use ExArch` injects:
+`use ExArchUnit` injects:
 
 ```elixir
 setup_all do
-  config = ExArch.Config.load!(@ex_arch_config_path)
-  {graph, stats} = ExArch.Graph.Cache.get_or_build(config)
+  config = ExArchUnit.Config.load!(@ex_arch_config_path)
+  {graph, stats} = ExArchUnit.Graph.Cache.get_or_build(config)
 
   if @ex_arch_enforce_config_rules do
-    ExArch.__assert_config_rules__(graph, config)
+    ExArchUnit.__assert_config_rules__(graph, config)
   end
 
   {:ok, graph: graph, arch_stats: stats, arch_config: config}
@@ -188,7 +188,7 @@ end
 
 Rules access the graph and config from the ExUnit test context.
 Layer rules defined in `arch.exs` are automatically evaluated during
-`setup_all` unless `enforce_config_rules: false` is passed to `use ExArch`.
+`setup_all` unless `enforce_config_rules: false` is passed to `use ExArchUnit`.
 
 ### Multi-Module Cache Interaction
 
@@ -290,7 +290,7 @@ tradeoff.
 
 ### Escape Hatches
 
-- `ExArch_NO_CACHE=1` → force rebuild regardless of fingerprint
+- `ExArchUnit_NO_CACHE=1` → force rebuild regardless of fingerprint
 - Optional future: `mix arch.clean`
 
 ---
@@ -336,7 +336,7 @@ Graph traversal complexity target: O(N + E) where N = modules, E = edges.
 Modules are represented as integer IDs internally for memory efficiency:
 
 ```elixir
-%ExArch.Graph{
+%ExArchUnit.Graph{
   module_to_id: %{module_atom => non_neg_integer()},
   id_to_module: %{non_neg_integer() => module_atom},
   adjacency:    %{non_neg_integer() => MapSet.t(non_neg_integer())}
@@ -357,7 +357,7 @@ The graph is immutable after construction.
 All Erlang `:xref` query syntax is contained in one file:
 
 ```
-ExArch.Graph.Builder
+ExArchUnit.Graph.Builder
 ```
 
 If `:xref` syntax or behaviour changes across OTP versions:
@@ -378,7 +378,7 @@ No other module in the library calls `:xref`.
 
 ## 11. Rule Evaluation Model
 
-Three rule types are implemented in `ExArch.Rule.Evaluator`:
+Three rule types are implemented in `ExArchUnit.Rule.Evaluator`:
 
 **`forbid(graph, config, source_selector, target_selector)`** — asserts no
 module in the source set depends on any module in the target set.
@@ -400,7 +400,7 @@ rules defined in `arch.exs` and returns aggregated violations.
 Selector resolution is memoized per graph/config combination via `Process`
 dictionary.
 
-Violations are formatted deterministically by `ExArch.Reporter`:
+Violations are formatted deterministically by `ExArchUnit.Reporter`:
 
 - Exact module names, sorted
 - One violation per line: `SourceModule -> TargetModule`
@@ -449,7 +449,7 @@ violations, fix code — as fast as a fingerprint check on most iterations.
 |---|---|---|
 | 1 | Works as ExUnit helper, with optional `mix arch.check` CLI | ✓ Implemented |
 | 2 | Graph built in `setup_all`, shared via cache across modules | ✓ Implemented — cache interaction documented |
-| 3 | Config in `arch.exs`, evaluated via `import ExArch.Config.DSL` + `Code.eval_string` | ✓ Implemented |
+| 3 | Config in `arch.exs`, evaluated via `import ExArchUnit.Config.DSL` + `Code.eval_string` | ✓ Implemented |
 | 4 | `:xref` fully isolated in `Graph.Builder` | ✓ Implemented |
 | 5 | Graph cached in `:persistent_term` | ✓ Implemented — GC penalty and size tradeoffs documented |
 | 6 | Invalidation via `arch.exs` hash + BEAM `max_mtime` + `beam_count` + config filter fields | ✓ Implemented — `max_mtime` tradeoff explicit |
@@ -460,7 +460,7 @@ violations, fix code — as fast as a fingerprint check on most iterations.
 
 ## Final Outcome
 
-ExArch will provide:
+ExArchUnit will provide:
 
 - Architecture as an enforceable, testable contract
 - Minimal cognitive overhead for rule authors

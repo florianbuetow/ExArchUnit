@@ -1,8 +1,8 @@
-defmodule ExArch.ReporterTest do
+defmodule ExArchUnit.ReporterTest do
   use ExUnit.Case, async: true
 
-  alias ExArch.Reporter
-  alias ExArch.Rule
+  alias ExArchUnit.Reporter
+  alias ExArchUnit.Rule
 
   # --- format_forbid/3 ---
 

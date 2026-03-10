@@ -1,25 +1,25 @@
 defmodule Mix.Tasks.Arch.CheckTest do
   use ExUnit.Case, async: false
 
-  alias ExArch.Graph.Cache
+  alias ExArchUnit.Graph.Cache
 
   setup do
     Cache.clear()
     previous_shell = Mix.shell()
     Mix.shell(Mix.Shell.Process)
-    saved_no_cache = System.get_env("ExArch_NO_CACHE")
-    saved_profile = System.get_env("ExArch_PROFILE")
+    saved_no_cache = System.get_env("ExArchUnit_NO_CACHE")
+    saved_profile = System.get_env("ExArchUnit_PROFILE")
 
     on_exit(fn ->
       Mix.shell(previous_shell)
 
       if saved_no_cache,
-        do: System.put_env("ExArch_NO_CACHE", saved_no_cache),
-        else: System.delete_env("ExArch_NO_CACHE")
+        do: System.put_env("ExArchUnit_NO_CACHE", saved_no_cache),
+        else: System.delete_env("ExArchUnit_NO_CACHE")
 
       if saved_profile,
-        do: System.put_env("ExArch_PROFILE", saved_profile),
-        else: System.delete_env("ExArch_PROFILE")
+        do: System.put_env("ExArchUnit_PROFILE", saved_profile),
+        else: System.delete_env("ExArchUnit_PROFILE")
     end)
 
     :ok
@@ -48,16 +48,16 @@ defmodule Mix.Tasks.Arch.CheckTest do
     assert msg =~ "All architecture rules passed."
   end
 
-  test "--no-cache flag sets ExArch_NO_CACHE env var" do
-    System.delete_env("ExArch_NO_CACHE")
+  test "--no-cache flag sets ExArchUnit_NO_CACHE env var" do
+    System.delete_env("ExArchUnit_NO_CACHE")
 
     Mix.Tasks.Arch.Check.run(["--config", "fixtures/arch_ok.exs", "--no-cache"])
 
-    assert System.get_env("ExArch_NO_CACHE") == "1"
+    assert System.get_env("ExArchUnit_NO_CACHE") == "1"
   end
 
-  test "ExArch_PROFILE=1 prints stats" do
-    System.put_env("ExArch_PROFILE", "1")
+  test "ExArchUnit_PROFILE=1 prints stats" do
+    System.put_env("ExArchUnit_PROFILE", "1")
 
     Mix.Tasks.Arch.Check.run(["--config", "fixtures/arch_ok.exs"])
 

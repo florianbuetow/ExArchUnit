@@ -1,6 +1,6 @@
 # ExArchUnit
 
-![Made with AI](https://img.shields.io/badge/Made%20with-AI-333333?labelColor=f00) ![Verified by Humans](https://img.shields.io/badge/Verified%20by-Humans-333333?labelColor=brightgreen) ![Coverage](https://img.shields.io/badge/Coverage-92.9%25-brightgreen)
+![Made with AI](https://img.shields.io/badge/Made%20with-AI-333333?labelColor=f00) ![Verified by Humans](https://img.shields.io/badge/Verified%20by-Humans-333333?labelColor=brightgreen) ![Coverage](https://img.shields.io/badge/Coverage-93.2%25-brightgreen)
 
 Enforce architecture rules in Elixir projects — without touching production code. Define layer boundaries in a standalone `arch.exs` file, run `mix arch.check`, and get CI-friendly output. Rules live outside your application, so your production modules stay clean.
 
@@ -50,7 +50,7 @@ mix arch.check --no-cache                 # bypass graph cache
 
 ### Option B: ExUnit tests (when you need more)
 
-Write a test file with `use ExArch` when you need capabilities beyond what `arch.exs` offers:
+Write a test file with `use ExArchUnit` when you need capabilities beyond what `arch.exs` offers:
 
 - **Cycle detection** — `assert_no_cycles` isn't available in `arch.exs` yet
 - **Ad-hoc rules** — one-off `forbid`/`allow` checks that don't belong in the global config
@@ -59,7 +59,7 @@ Write a test file with `use ExArch` when you need capabilities beyond what `arch
 ```elixir
 defmodule ArchitectureTest do
   use ExUnit.Case, async: true
-  use ExArch, config: "arch.exs"
+  use ExArchUnit, config: "arch.exs"
 
   # Cycle detection (not available in arch.exs)
   test "domain has no cycles" do
@@ -77,7 +77,7 @@ end
 mix test
 ```
 
-Note: `use ExArch` also auto-enforces your `arch.exs` layer rules during `setup_all` by default, so you don't need to duplicate them as tests.
+Note: `use ExArchUnit` also auto-enforces your `arch.exs` layer rules during `setup_all` by default, so you don't need to duplicate them as tests.
 
 ## Features
 
@@ -104,16 +104,16 @@ If you prefer compile-time enforcement baked into your modules, use Boundary. If
 
 ## ExUnit API
 
-These macros are available inside test modules that `use ExArch`:
+These macros are available inside test modules that `use ExArchUnit`:
 
 - `forbid/2` — fails when source modules depend on forbidden targets.
 - `allow/2` — fails when source modules depend on anything outside the allow-list (self-references are always permitted).
 - `assert_no_cycles/1` — fails when SCC cycles are found in selected modules.
 
-`use ExArch` also auto-enforces `arch.exs` layer rules during `setup_all`. Disable if needed:
+`use ExArchUnit` also auto-enforces `arch.exs` layer rules during `setup_all`. Disable if needed:
 
 ```elixir
-use ExArch, config: "arch.exs", enforce_config_rules: false
+use ExArchUnit, config: "arch.exs", enforce_config_rules: false
 ```
 
 ## `arch.exs` DSL
@@ -183,9 +183,9 @@ The cache invalidates when:
 ### Environment Variables
 
 ```bash
-ExArch_NO_CACHE=1 mix test         # force rebuild every time
-ExArch_PROFILE=1  mix test         # print graph build stats
-ExArch_PROFILE=1  mix arch.check   # also works with arch.check
+ExArchUnit_NO_CACHE=1 mix test         # force rebuild every time
+ExArchUnit_PROFILE=1  mix test         # print graph build stats
+ExArchUnit_PROFILE=1  mix arch.check   # also works with arch.check
 ```
 
 ### Performance
@@ -217,7 +217,7 @@ just code-benchmark    # Benchmark graph build on a synthetic umbrella
 Tune benchmark size:
 
 ```bash
-ExArch_BENCH_APPS=6 ExArch_BENCH_MODULES_PER_APP=120 just code-benchmark
+ExArchUnit_BENCH_APPS=6 ExArchUnit_BENCH_MODULES_PER_APP=120 just code-benchmark
 ```
 
 ### CI

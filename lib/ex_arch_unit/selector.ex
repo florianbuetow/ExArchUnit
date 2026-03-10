@@ -1,4 +1,4 @@
-defmodule ExArch.Selector do
+defmodule ExArchUnit.Selector do
   @moduledoc """
   Compiles and matches module-name selector patterns.
 
